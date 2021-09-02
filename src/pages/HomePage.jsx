@@ -1,14 +1,17 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Article, PopularTags } from '../components'
-import { useArticles } from '../hooks'
+import { ArticlePreview, PopularTags } from '../components'
+import { useArticles, useAuth } from '../hooks'
 
 const DEFAULT_LIMIT = 10
 
-function Home() {
+function HomePage() {
   const [offset, setOffset] = React.useState(0)
   const [activeTag, setActiveTag] = React.useState(null)
-  const filters = { limit: DEFAULT_LIMIT, offset, tag: activeTag }
+  const { isAuth } = useAuth()
+  const [isFeed, setIsFeed] = React.useState(isAuth)
+  const computedIsFeed = isFeed && !activeTag
+  const filters = { limit: DEFAULT_LIMIT, offset, tag: activeTag, feed: computedIsFeed }
 
   const { data, isFetching } = useArticles(filters)
 
@@ -27,15 +30,21 @@ function Home() {
               <ul className="nav nav-pills outline-active">
                 {/* Should be set to active by default if user is auth */}
                 <li className="nav-item">
-                  <button type="button" className="nav-link">
+                  <button
+                    type="button"
+                    onClick={() => setIsFeed(true)}
+                    className={classNames('nav-link', { active: computedIsFeed })}
+                  >
                     Your Feed
                   </button>
                 </li>
                 <li className="nav-item">
                   <button
-                    onClick={() => setActiveTag(null)}
+                    onClick={() => {
+                      setActiveTag(null), setIsFeed(false)
+                    }}
                     type="button"
-                    className={classNames('nav-link', { active: !activeTag })}
+                    className={classNames('nav-link', { active: !activeTag && !isFeed })}
                   >
                     Global Feed
                   </button>
@@ -48,13 +57,13 @@ function Home() {
               </ul>
             </div>
             {data.articles?.map((article) => (
-              <Article article={article} filters={filters} />
+              <ArticlePreview key={article.slug} article={article} />
             ))}
             {isFetching && <div className="article-preview">Loading articles...</div>}
             <nav>
               <ul className="pagination">
                 {Array.from({ length: data.articlesCount / DEFAULT_LIMIT }, (_, index) => (
-                  <li className={classNames('page-item', { active: index === offset / DEFAULT_LIMIT })}>
+                  <li key={index} className={classNames('page-item', { active: index === offset / DEFAULT_LIMIT })}>
                     <button type="button" className="page-link" onClick={() => setOffset(index * DEFAULT_LIMIT)}>
                       {index + 1}
                     </button>
@@ -72,4 +81,4 @@ function Home() {
   )
 }
 
-export default Home
+export default HomePage

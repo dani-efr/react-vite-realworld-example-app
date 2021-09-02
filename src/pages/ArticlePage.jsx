@@ -1,13 +1,18 @@
 import React from 'react'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import faker from 'faker'
+import { useParams } from 'react-router-dom'
+import { useArticle } from '../hooks'
 
-function Article() {
+function ArticlePage() {
+  const { slug } = useParams()
+  const { data } = useArticle({ slug })
+
   return (
     <div className="article-page">
       <div className="banner">
         <div className="container">
-          <h1>{faker.lorem.sentence()}</h1>
+          <h1>{}</h1>
           <div className="article-meta">
             <a>
               <img src={faker.image.avatar()} />
@@ -128,4 +133,4 @@ function Article() {
   )
 }
 
-export default Article
+export default ArticlePage

@@ -6,7 +6,7 @@ import { useMatch, useNavigate } from 'react-router-dom'
 import { ErrorsList } from '../components'
 import { useAuth } from '../hooks'
 
-function Auth() {
+function AuthPage() {
   const isRegister = useMatch('/register') !== null
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -83,4 +83,4 @@ function Auth() {
   )
 }
 
-export default Auth
+export default AuthPage

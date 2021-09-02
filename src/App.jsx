@@ -1,15 +1,11 @@
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom'
-import { Article, Auth, Home } from './pages'
+import { BrowserRouter as Router, Routes, Route, NavLink, Link } from 'react-router-dom'
+import { ArticlePage, AuthPage, HomePage } from './pages'
 import { useAuth } from './hooks'
 
 import './App.css'
 
 function App() {
-  // Set "active" class on the active link
-  // Show links according to auth status
-  // Set up new routes for /login and /register
-
   const { isAuth } = useAuth()
   const { authUser } = useAuth()
 
@@ -18,32 +14,33 @@ function App() {
       <header>
         <nav className="navbar navbar-light">
           <div className="container">
-            <a className="navbar-brand">conduit</a>
+            <Link to="/" className="navbar-brand">
+              conduit
+            </Link>
             <ul className="nav navbar-nav pull-xs-right">
               <li className="nav-item">
-                <NavLink to="/" activeClassName="active" className="nav-link">
+                <NavLink to="/" activeClassName="active" className="nav-link" end>
                   Home
                 </NavLink>
               </li>
               {isAuth && (
                 <React.Fragment>
                   <li className="nav-item">
-                    <NavLink to="" activeClassName="active" className="nav-link">
+                    <NavLink to="/editor" activeClassName="active" className="nav-link">
                       <i className="ion-compose" />
                       &nbsp;New Post
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="" activeClassName="active" className="nav-link">
+                    <NavLink to="/settings" activeClassName="active" className="nav-link">
                       <i className="ion-gear-a" />
                       &nbsp;Settings
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="" activeClassName="active" className="nav-link">
-                      {/* Auth user avatar */}
-                      <img src={authUser.image} />
+                    <NavLink to={`/@${authUser.username}`} activeClassName="active" className="nav-link">
                       {authUser.username}
+                      <img src={authUser.image} />
                     </NavLink>
                   </li>
                 </React.Fragment>
@@ -74,10 +71,10 @@ function App() {
       </header>
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/article/:articleId" element={<Article />} />
-          <Route path="/login" element={<Auth />} />
-          <Route path="/register" element={<Auth />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/article/:slug" element={<ArticlePage />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/register" element={<AuthPage />} />
         </Routes>
       </main>
       <footer>

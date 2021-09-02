@@ -1,6 +1,6 @@
-import Author from './Author'
+import AuthorModel from './AuthorModel'
 
-class Article {
+class ArticleModel {
   constructor({
     slug = '',
     title = '',
@@ -12,7 +12,7 @@ class Article {
     favorited = false,
     favoritesCount = 0,
     author = {},
-  }) {
+  } = {}) {
     this.slug = slug
     this.title = title
     this.description = description
@@ -22,8 +22,8 @@ class Article {
     this.updatedAt = new Date(updatedAt).toDateString()
     this.favorited = favorited
     this.favoritesCount = favoritesCount
-    this.author = new Author(author)
+    this.author = new AuthorModel(author)
   }
 }
 
-export default Article
+export default ArticleModel
