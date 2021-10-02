@@ -1,12 +1,21 @@
+import axios from 'axios'
 import React from 'react'
 import { useQuery } from 'react-query'
 
 function PopularTags({ onClick }) {
-  const { data, isFetching } = useQuery('/tags', {
-    placeholderData: {
-      tags: [],
+  const { data, isFetching } = useQuery(
+    'tags',
+    async () => {
+      const { data } = await axios.get('/tags')
+
+      return data
     },
-  })
+    {
+      placeholderData: {
+        tags: [],
+      },
+    }
+  )
 
   return (
     <div className="sidebar">

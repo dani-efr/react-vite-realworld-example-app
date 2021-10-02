@@ -6,7 +6,7 @@ import { ConditionalWrapper } from '.'
 
 function FavoriteArticleButton({ article, children = [], className = '' }) {
   const queryClient = useQueryClient()
-  const queryKey = `/articles/${article.slug}`
+  const queryKey = ['articles', article.slug]
 
   const favorite = useMutation(
     () => axios[article.favorited ? 'delete' : 'post'](`/articles/${article.slug}/favorite`),

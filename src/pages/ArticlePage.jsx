@@ -16,7 +16,7 @@ function ArticlePage() {
         <div className="container">
           <h1>{data.title}</h1>
           <div className="article-meta">
-            <ArticleMeta data={data}></ArticleMeta>
+            <ArticleMeta article={data}></ArticleMeta>
           </div>
         </div>
       </div>
@@ -30,7 +30,7 @@ function ArticlePage() {
         <hr />
         <div className="article-actions">
           <div className="article-meta">
-            <ArticleMeta data={data}></ArticleMeta>
+            <ArticleMeta article={data}></ArticleMeta>
           </div>
         </div>
         <div className="row">

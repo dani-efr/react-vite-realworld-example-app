@@ -1,16 +1,46 @@
-import classNames from 'classnames'
 import React from 'react'
-import { FavoriteArticleButton } from '.'
+import { useQueryClient } from 'react-query'
+import { FavoriteArticleButton, FollowAuthorButton } from '.'
 import { useAuth } from '../hooks'
 import ArticleInfo from './ArticleInfo'
 
-function ArticleMeta({ data }) {
+function ArticleMeta({ article }) {
   const { authUser } = useAuth()
+  const queryClient = useQueryClient()
+  const queryKey = ['articles', article.slug]
+
+  const mutationConfig = {
+    onMutate: async () => {
+      await queryClient.cancelQueries(queryKey)
+
+      const previousArticle = queryClient.getQueryData(queryKey)
+
+      queryClient.setQueryData(queryKey, ({ articles }) => ({
+        article: {
+          ...article,
+          author: {
+            ...article.author,
+            following: !article.author.following,
+          },
+        },
+      }))
+
+      return { previousArticle }
+    },
+
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(queryKey, context.previousArticle)
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries(['/articles'])
+    },
+  }
 
   return (
     <React.Fragment>
-      <ArticleInfo data={data}></ArticleInfo>
-      {authUser.username === data.author?.username ? (
+      <ArticleInfo data={article}></ArticleInfo>
+      {authUser.username === article.author?.username ? (
         <React.Fragment>
           <span>
             <a className="btn btn-outline-secondary btn-sm">
@@ -24,21 +54,10 @@ function ArticleMeta({ data }) {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <button
-            disabled={false}
-            type="button"
-            className={classNames('btn btn-sm action-btn', {
-              'btn-outline-secondary': !data.author.following,
-              'btn-secondary': data.author.following,
-            })}
-          >
-            <i className="ion-plus-round" />
-            &nbsp; {data.author.following ? 'Unfollow ' : 'Follow '}
-            {data.author.username}
-          </button>
+          <FollowAuthorButton user={article.author} mutationConfig={mutationConfig}></FollowAuthorButton>
           &nbsp;&nbsp;
-          <FavoriteArticleButton article={data}>
-            {data.favorited ? 'Unfavorite' : 'Favorite'} Article
+          <FavoriteArticleButton article={article}>
+            {article.favorited ? 'Unfavorite' : 'Favorite'} Article
           </FavoriteArticleButton>
         </React.Fragment>
       )}
